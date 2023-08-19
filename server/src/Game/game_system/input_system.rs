@@ -85,12 +85,14 @@ impl IGameSystem for InputSystem {
         
     }
     fn update(&mut self) {
+        
         loop {
             match self.recv.try_recv() {
                 Err(err) => {
                     break;
                 }
                 Ok(value) => {
+                    println!("input system received: {}", value);
                     let id = value >> 5;
                     let id: usize = id.try_into().unwrap();
                     self.inputs[id] = value;

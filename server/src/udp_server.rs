@@ -60,8 +60,9 @@ impl CAUdpServer {
             loop {
                 let data = match receiver.recv() {
                     Ok(data) => data,
-                    Err(err) => panic!("Problem clone socket: {:?}", err),
+                    Err(err) => panic!("Problem receive: {:?}", err),
                 };
+                println!("Sending: {}", data[0]);
                 // preparation state
                 if data.len() == 1 {
                     if let Ok(addr) = prep_recv.try_recv() {
