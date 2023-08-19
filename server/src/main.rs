@@ -1,23 +1,35 @@
-mod Game;
+mod game;
+mod udp_server;
 
-use crate::Game::CAGame;
-use crate::Game::IGame;
+use crate::game::CAGame;
+use crate::game::IGame;
+use crate::udp_server::CAUdpServer;
+use std::sync::mpsc;
 use std::cell::RefCell;
-use std::{vec, rc::Rc};
+use std::rc::Rc;
+use std::vec::Vec;
 
 fn main() {
     println!("hello");
-    let game: Rc<RefCell<dyn IGame>> = Rc::new(RefCell::new(CAGame {
-        mSystems: Vec::new(),
-    }));
+    let (send_from_server, recv_from_server) = mpsc::channel::<u8>();
+    let server: CAUdpServer = CAUdpServer::new(String::from("127.0.0.1:34254")).unwrap();
+    let make_server_send = server.run(send_from_server);
+    let game: Rc<RefCell<dyn IGame>> = Rc::new(RefCell::new(CAGame::new(Vec::new())));
     game.borrow_mut();
     loop {
         game.borrow_mut().update();
     }
 }
+
 /*
 
-1xxx xxxx //begin point of object
+xxxx xxxx //type (size)
+xxxx xxxx
+xxxx xxxx
+xxxx xxxx
+xxxx xxxx
+
+xxxx xxxx
 
 
 
