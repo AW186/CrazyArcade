@@ -224,9 +224,6 @@
 #begin JsonLevels/Map.json
 /copy:JsonLevels/Map.json
 
-#begin JsonLevels/oct_test.json
-/copy:JsonLevels/oct_test.json
-
 #begin JsonLevels/penultimate_boss.json
 /copy:JsonLevels/penultimate_boss.json
 
