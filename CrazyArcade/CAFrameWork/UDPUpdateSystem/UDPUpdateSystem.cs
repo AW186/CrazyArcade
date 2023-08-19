@@ -19,7 +19,7 @@ namespace CrazyArcade.CAFrameWork.UDPUpdateSystem
 			this.client = client;
 			this.sceneDelegate = sceneDelegate;
 			Thread thread = new Thread(new ThreadStart(() => {
-				long stateID = -1;
+				ulong stateID = 0;
 				while (true)
 				{
 					Byte[] stream = this.client.Receive(ref remoteEndpoint);
@@ -27,7 +27,8 @@ namespace CrazyArcade.CAFrameWork.UDPUpdateSystem
 						Console.WriteLine(stream[0]);
 						continue;
 					}
-					long newID = this.getStreamId(stream);
+					ulong newID = this.getStreamId(stream);
+					Console.WriteLine(newID);
 					if (newID > stateID)
 					{
 						stateID = newID;
@@ -61,14 +62,14 @@ namespace CrazyArcade.CAFrameWork.UDPUpdateSystem
 		{
 			return stream[offset+1];
 		}
-		private long getStreamId(Byte[] stream)
+		private ulong getStreamId(Byte[] stream)
 		{
-			long networkLong = 0;
+			ulong networkLong = 0;
 			for (int i = 0; i < 8; i++)
 			{
-				networkLong += ((long)stream[i]) << ((7 - i) * 8);
+				networkLong += ((ulong)stream[i]) << ((7 - i) * 8);
 			}
-			return (long)IPAddress.NetworkToHostOrder(networkLong);
+			return networkLong;
 		}
 
 		public void Update(GameTime time)

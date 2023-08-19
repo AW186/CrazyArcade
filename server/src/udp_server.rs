@@ -29,7 +29,6 @@ impl CAUdpServer {
                 let mut buf: [u8; 50] = [0;50];
                 let (_, src_addr) = sock.recv_from(&mut buf)
     .expect("Didn't receive data");
-                println!("Received {}", buf[0]);
                 if let Some(id) = players.get(&src_addr) {
                     socket_out.send(vec![*id]).unwrap();
                 } else {
@@ -62,7 +61,6 @@ impl CAUdpServer {
                     Ok(data) => data,
                     Err(err) => panic!("Problem receive: {:?}", err),
                 };
-                println!("Sending: {}", data[0]);
                 // preparation state
                 if data.len() == 1 {
                     if let Ok(addr) = prep_recv.try_recv() {
@@ -72,8 +70,15 @@ impl CAUdpServer {
                     if let Err(err) = sock.send_to(&data[..], playerlist[idx]) {
                         println!("Sock send error: {}", err);
                     }
+                    continue;
                 }
                 // Game state
+                println!("game state");
+                for player_addr in &playerlist {
+                    if let Err(err) = sock.send_to(&data, player_addr) {
+                        print!("Send to client Err {}", err);
+                    }
+                }
             }
         });
         return sender;
