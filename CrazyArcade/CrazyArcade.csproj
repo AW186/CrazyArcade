@@ -29,6 +29,8 @@
     <None Remove="CAFrameWork\InputSystem\" />
     <None Remove="Utilities\" />
     <None Remove="Pirates\" />
+    <None Remove="CAFrameWork\UDPUpdateSystem\" />
+    <None Remove="CAFrameWork\UDPUserInputSystem\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icon.ico" />
@@ -46,6 +48,8 @@
     <Folder Include="CAFrameWork\InputSystem\" />
     <Folder Include="Utilities\" />
     <Folder Include="Pirates\" />
+    <Folder Include="CAFrameWork\UDPUpdateSystem\" />
+    <Folder Include="CAFrameWork\UDPUserInputSystem\" />
   </ItemGroup>
   <Target Name="RestoreDotnetTools" BeforeTargets="Restore">
     <Message Text="Restoring dotnet tools" Importance="High" />
