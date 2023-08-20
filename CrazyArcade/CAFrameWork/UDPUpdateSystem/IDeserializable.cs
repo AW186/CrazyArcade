@@ -3,10 +3,10 @@ using CrazyArcade.CAFramework;
 
 namespace CrazyArcade.CAFrameWork.UDPUpdateSystem
 {
-	public interface ISerializable: IEntity
+	public interface IDeserializable: IEntity
 	{
 		int UpdateFieldWithStream(Byte[] stream, int offset); //return new offset
-		int type();
+		int GetType();
 	}
 }
 

@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 
 byteorder="1.4.3"
+libc="0.2.65"

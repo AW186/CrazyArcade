@@ -2,7 +2,7 @@ mod game;
 mod udp_server;
 mod constant;
 
-// extern crate libc; // 0.2.65
+extern crate libc; // 0.2.65
 use crate::game::CAGame;
 use crate::game::IGame;
 use crate::game::game_system::input_system::InputSystem;
@@ -14,7 +14,13 @@ use std::sync::mpsc;
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::thread;
+use std::mem;
 
+unsafe fn cpp_new<T>(obj: T) -> *mut T {
+    let res = libc::malloc(mem::size_of::<T>() as libc::size_t) as *mut T;
+    *res = obj;
+    res
+}
 fn main() {
     println!("hello");
     let (send_from_server, recv_from_server) = mpsc::channel::<u8>();
@@ -24,9 +30,12 @@ fn main() {
         Rc::new(RefCell::new(InputSystem::new(recv_from_server))),
         Rc::new(RefCell::new(OutputSystem::new(make_server_send)))
     ])));
-    // game.borrow_mut().setup(vec![
-    //     &block::Block::new(0, 0, 0),
-    // ]);
+    unsafe {
+        game.borrow_mut().setup(vec![
+            cpp_new(block::Block::new(0, 0, 0)),
+        ]);
+    }
+    
     let millis = time::Duration::from_millis(1);
     loop {
         thread::sleep(millis);

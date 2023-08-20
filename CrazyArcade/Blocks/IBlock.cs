@@ -7,10 +7,11 @@ using CrazyArcade.CAFrameWork.GridBoxSystem;
 using CrazyArcade.EnemyCollision;
 using CrazyArcade.Enemies;
 using System.Collections.Generic;
+using CrazyArcade.CAFrameWork.UDPUpdateSystem;
 
 namespace CrazyArcade.Blocks
 {
-    public abstract class Block : CAGridBoxEntity, IGridable, IExplosionCollidable, IEnemyCollidable
+    public abstract class Block : CAGridBoxEntity, IGridable, IExplosionCollidable, IEnemyCollidable, IDeserializable
     {
 
         //----------IGridable Start------------
@@ -102,5 +103,15 @@ namespace CrazyArcade.Blocks
         {
             return new HashSet<Point>();
         }
+
+		public int UpdateFieldWithStream(byte[] stream, int offset)
+		{
+            return offset + 5;
+		}
+
+		int IDeserializable.GetType()
+		{
+            return UDPUpdateSystem.BlockType();
+		}
 	}
 }

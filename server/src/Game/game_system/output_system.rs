@@ -4,8 +4,6 @@ use crate::constant::entity_traits::SERIALIZABLE_TRAIT;
 use crate::game::game_system::IGameSystem;
 use crate::game::game_system::output_system::serializable::ISerializable;
 use crate::game::entity::{IEntity, EntityTraits};
-use std::cell::RefCell;
-use std::rc::Rc;
 use std::sync::mpsc::Sender;
 use byteorder::{BigEndian, WriteBytesExt};
 use std::vec::Vec;
@@ -24,7 +22,7 @@ impl OutputSystem {
         let mut res = OutputSystem {
             make_server_send: sender,
             state_id: 0,
-            output_objs: vec![None; 256],
+            output_objs: vec![None; 255],
             free_list: vec![255; 256],
             head: 0,
         };
@@ -51,15 +49,18 @@ impl IGameSystem for OutputSystem {
             println!("Write err: {}", err);
         }
         let mut idx: u8 = 0;
+        println!("obj len: {}", self.output_objs.len());
         for obj in &self.output_objs {
             if let Some(obj) = obj {
                 stream.push(idx);   //object id
-                unsafe { //object data
-                    stream.extend((**obj).serialize()) 
+                unsafe { 
+                    stream.push((**obj).get_type()); //object type
+                    stream.extend((**obj).serialize()) //object data
                 }; 
             }
+            idx += 1;
         }
-        println!("sending {}", self.state_id);
+        println!("sending {} with size {}", self.state_id, stream.len());
         if let Err(err) = self.make_server_send.send(stream) {
             println!("send error: {}", err);
         }

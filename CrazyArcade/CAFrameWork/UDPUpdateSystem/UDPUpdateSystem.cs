@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -7,6 +8,7 @@ using Microsoft.Xna.Framework;
 
 namespace CrazyArcade.CAFrameWork.UDPUpdateSystem
 {
+	
 	public class UDPUpdateSystem: IGameSystem
 	{
 		private UdpClient client;
@@ -14,6 +16,7 @@ namespace CrazyArcade.CAFrameWork.UDPUpdateSystem
 		private Byte[] state;
 		private IPEndPoint remoteEndpoint = new IPEndPoint(IPAddress.Any, 0);
 		private Mutex mu = new Mutex();
+		private IDeserializable[] entities = new IDeserializable[255];
 		public UDPUpdateSystem(UdpClient client, ISceneDelegate sceneDelegate)
 		{
 			this.client = client;
@@ -23,6 +26,7 @@ namespace CrazyArcade.CAFrameWork.UDPUpdateSystem
 				while (true)
 				{
 					Byte[] stream = this.client.Receive(ref remoteEndpoint);
+					//Preparation State
 					if (stream.Length < 8) {
 						Console.WriteLine(stream[0]);
 						continue;
@@ -44,23 +48,25 @@ namespace CrazyArcade.CAFrameWork.UDPUpdateSystem
 
 		public void AddSprite(IEntity sprite)
 		{
+			
 		}
 
 		public void RemoveAll()
 		{
+
 		}
 
 		public void RemoveSprite(IEntity sprite)
 		{
 		}
 
-		private int getObjectID(Byte[] stream, int offset)
+		private int getObjectID(int offset)
 		{
-			return stream[offset];
+			return offset >= state.Length ? -1 : state[offset];
 		}
-		private int getObjectType(Byte[] stream, int offset)
+		private int getObjectType(int offset)
 		{
-			return stream[offset+1];
+			return state[offset+1];
 		}
 		private ulong getStreamId(Byte[] stream)
 		{
@@ -71,13 +77,26 @@ namespace CrazyArcade.CAFrameWork.UDPUpdateSystem
 			}
 			return networkLong;
 		}
-
+		
 		public void Update(GameTime time)
 		{
 			mu.WaitOne();
-
+			int offset = 8;
+			for (int i = 0; i < 256; i++) {
+				int id = this.getObjectID(offset);
+				int objtype = this.getObjectType(offset);
+				if (id != i) this.entities[i] = null;
+				else if (objtype != this.entities[i].GetType()) (offset, this.entities[i]) = make(this.state, offset);
+				else offset = this.entities[i].UpdateFieldWithStream(this.state, offset);
+			}
 			mu.ReleaseMutex();
 		}
+		private static (int, IDeserializable) make(Byte[] stream, int offset)
+		{
+			return (offset, null);
+		}
+
+		public static int BlockType() => 0;
 	}
 }
 

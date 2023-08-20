@@ -2,7 +2,6 @@
 use std::vec;
 use std::time::SystemTime;
 use std::sync::mpsc::Receiver;
-use std::rc::Rc;
 
 use crate::game::IGameSystem;
 use crate::game::entity::{IEntity, EntityTraits};
@@ -88,7 +87,7 @@ impl IGameSystem for InputSystem {
     fn update(&mut self) {
         loop {
             match self.recv.try_recv() {
-                Err(err) => {
+                Err(_) => {
                     break;
                 }
                 Ok(value) => {
@@ -104,7 +103,9 @@ impl IGameSystem for InputSystem {
             let id: usize = id.try_into().unwrap();
             match self.inputs_time[id].elapsed() {
                 Ok(elapsed) => unsafe {
-                    self.update_listener(id);
+                    if elapsed.as_millis() < 500 {
+                        self.update_listener(id);
+                    }
                 }
                 Err(err) => {
                     println!("time error: {}", err);
