@@ -1,11 +1,12 @@
+
 use std::vec;
-use std::time::{Duration, SystemTime};
+use std::time::SystemTime;
 use std::sync::mpsc::Receiver;
-use std::cell::RefCell;
 use std::rc::Rc;
 
 use crate::game::IGameSystem;
-use crate::game::IEntity;
+use crate::game::entity::{IEntity, EntityTraits};
+use crate::constant;
 
 /* 
 By default we only have 2 users, but say if we have 8, 
@@ -31,7 +32,7 @@ const RIGHT:        u8 = 4;
 const BOMB_MASK:    u8 = 4;
 
 
-pub trait IInputListener {
+pub trait IInputListener: IEntity {
     fn up(&mut self);
     fn down(&mut self);
     fn left(&mut self);
@@ -43,7 +44,7 @@ pub struct InputSystem {
     inputs_time: Vec<SystemTime>,
     inputs: Vec<u8>,
     recv: Receiver<u8>,
-    listeners: Vec<Rc<RefCell<dyn IInputListener>>>,
+    listeners: Vec<*mut dyn IInputListener>,
 }
 
 impl InputSystem {
@@ -55,27 +56,27 @@ impl InputSystem {
             listeners: Vec::new(),
         };
     }
-    fn updateListener(&self, id: usize) {
+    unsafe fn update_listener(&mut self, id: usize) {
         let dir = self.inputs[id] & 0b00000111;
         match dir {
             UP => {
-                self.listeners[id].borrow_mut().up();
+                (*self.listeners[id]).up();
             }
             DOWN => {
-                self.listeners[id].borrow_mut().down();
+                (*self.listeners[id]).down();
             }
             LEFT => {
-                self.listeners[id].borrow_mut().left();
+                (*self.listeners[id]).left();
             }
             RIGHT => {
-                self.listeners[id].borrow_mut().right();
+                (*self.listeners[id]).right();
             }
             _ => {
                 
             }
         }
         if (self.inputs[id] & BOMB_MASK) != 0 {
-            self.listeners[id].borrow_mut().bomb();
+            (*(self.listeners[id])).bomb();
         }
     }
 }
@@ -85,7 +86,6 @@ impl IGameSystem for InputSystem {
         
     }
     fn update(&mut self) {
-        
         loop {
             match self.recv.try_recv() {
                 Err(err) => {
@@ -103,8 +103,8 @@ impl IGameSystem for InputSystem {
         for id in 0..self.listeners.len() {
             let id: usize = id.try_into().unwrap();
             match self.inputs_time[id].elapsed() {
-                Ok(elapsed) => {
-                    self.updateListener(id);
+                Ok(elapsed) => unsafe {
+                    self.update_listener(id);
                 }
                 Err(err) => {
                     println!("time error: {}", err);
@@ -112,7 +112,14 @@ impl IGameSystem for InputSystem {
             }
         }
     }
-    fn add(&self, entity: Rc<RefCell<dyn IEntity>>) {
+    fn add(&mut self, entity: *mut dyn IEntity) {
+        unsafe {
+            if let EntityTraits::EInputListener(listener) = (*entity).down_cast(constant::entity_traits::INPUT_LISTENER) {
+                self.listeners.push(listener);
+            }
+        }
+    }
+    fn remove(&mut self, entity: *mut dyn IEntity) {
         
     }
 }

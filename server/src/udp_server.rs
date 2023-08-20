@@ -47,7 +47,7 @@ impl CAUdpServer {
             }
         });
     }
-    fn run_udp_output(&self, out: Sender<u8>, prep_recv: Receiver<SocketAddr>) -> Sender<Vec<u8>> {
+    fn run_udp_output(&self, prep_recv: Receiver<SocketAddr>) -> Sender<Vec<u8>> {
         let sock = match self.m_sock.try_clone() {
             Ok(udpsock) => udpsock,
             Err(err) => panic!("Problem clone socket: {:?}", err),
@@ -85,7 +85,7 @@ impl CAUdpServer {
     }
     pub fn run(&self, out: Sender<u8>) -> Sender<Vec<u8>> {
         let (prep_sender, prep_receiver) = channel::<SocketAddr>();
-        let res = self.run_udp_output(out.clone(), prep_receiver);
+        let res = self.run_udp_output(prep_receiver);
         self.run_udp_input(out, res.clone(), prep_sender);
         return res;
     }

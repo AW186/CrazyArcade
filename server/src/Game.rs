@@ -1,4 +1,3 @@
-use std::vec;
 use std::rc::Rc;
 use std::cell::RefCell;
 
@@ -8,8 +7,13 @@ use crate::game::entity::IEntity;
 use crate::game::game_system::IGameSystem;
 
 pub trait IGame {    
-    fn setup(&mut self, entities: Vec<Rc<RefCell<dyn IEntity>>>);
+    fn setup(&mut self, entities: Vec<*mut dyn IEntity>);
     fn update(&mut self);
+}
+
+pub trait IGameDelegate {
+    fn to_add(&mut self, entity: Rc<RefCell<dyn IEntity>>);
+    fn to_remove(&mut self, entity: Rc<RefCell<dyn IEntity>>);
 }
 
 pub struct CAGame {
@@ -27,13 +31,12 @@ impl CAGame {
 }
 
 impl IGame for CAGame {
-
     fn setup(&mut self,
-        entities: Vec<Rc<RefCell<dyn IEntity>>>) {
+        entities: Vec<*mut dyn IEntity>) {
         println!("setup");
         for entity in entities {
             for sys in &self.m_systems {
-                sys.borrow_mut().add(entity.clone());
+                sys.borrow_mut().add(entity);
             }
         }
     }
@@ -46,7 +49,14 @@ impl IGame for CAGame {
 }
 
 impl CAGame {
-    fn add(&mut self, IEntity: Rc<RefCell<dyn IEntity>>) {
-        let newIEntity = Rc::clone(&IEntity);
-    } 
+    fn add(&self, entity: *mut dyn IEntity) {
+        for sys in &self.m_systems {
+            sys.borrow_mut().add(entity);
+        }
+    }
+    fn remove(&self, entity: *mut dyn IEntity) {
+        for sys in &self.m_systems {
+            sys.borrow_mut().remove(entity);
+        }
+    }
 }
