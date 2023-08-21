@@ -1,5 +1,7 @@
 use std::vec::Vec;
-pub trait ISerializable {
+use crate::game::entity::IEntity;
+
+pub trait ISerializable: IEntity {
     fn serialize(&self) -> Vec<u8>;
     fn get_type(&self) -> u8;
     fn get_id(&self) -> u8;

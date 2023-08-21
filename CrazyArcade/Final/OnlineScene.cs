@@ -63,7 +63,7 @@ namespace CrazyArcade.Final
 			this.systems.Add(new UDPUpdateSystem(udpClient, this));
 			//this.systems.Add(new CASoundSystem());
 			//this.systems.Add(new InputSystems());
-			this.systems.Add(new GridBoxSystem());
+			//this.systems.Add(new GridBoxSystem());
             //this.systems.Add(new BombCollisionSystem(this, new Rectangle(0, 0, 15, 15)));
             this.systems.Add(gridSystems);
             //this.systems.Add(new PlayerCollisionSystem());
