@@ -33,6 +33,8 @@ fn main() {
     unsafe {
         game.borrow_mut().setup(vec![
             cpp_new(block::Block::new(0, 0, 0)),
+            cpp_new(block::Block::new(0, 1, 0)),
+            cpp_new(block::Block::new(0, 2, 0)),
         ]);
     }
     

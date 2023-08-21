@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using CrazyArcade.Blocks;
 using CrazyArcade.CAFramework;
+using CrazyArcade.Levels;
 using Microsoft.Xna.Framework;
 
 namespace CrazyArcade.CAFrameWork.UDPUpdateSystem
@@ -13,7 +15,7 @@ namespace CrazyArcade.CAFrameWork.UDPUpdateSystem
 	{
 		private UdpClient client;
 		private ISceneDelegate sceneDelegate;
-		private Byte[] state;
+		private Byte[] state = new Byte[0];
 		private IPEndPoint remoteEndpoint = new IPEndPoint(IPAddress.Any, 0);
 		private Mutex mu = new Mutex();
 		private IDeserializable[] entities = new IDeserializable[255];
@@ -28,14 +30,13 @@ namespace CrazyArcade.CAFrameWork.UDPUpdateSystem
 					Byte[] stream = this.client.Receive(ref remoteEndpoint);
 					//Preparation State
 					if (stream.Length < 8) {
-						Console.WriteLine(stream[0]);
 						continue;
 					}
 					ulong newID = this.getStreamId(stream);
-					Console.WriteLine(newID);
 					if (newID > stateID)
 					{
 						stateID = newID;
+						Console.WriteLine(newID);
 						mu.WaitOne();
 						this.state = stream;
 						mu.ReleaseMutex();
@@ -48,7 +49,7 @@ namespace CrazyArcade.CAFrameWork.UDPUpdateSystem
 
 		public void AddSprite(IEntity sprite)
 		{
-			
+			Console.WriteLine("Added");
 		}
 
 		public void RemoveAll()
@@ -62,11 +63,11 @@ namespace CrazyArcade.CAFrameWork.UDPUpdateSystem
 
 		private int getObjectID(int offset)
 		{
-			return offset >= state.Length ? -1 : state[offset];
+			return offset >= this.state.Length ? -1 : this.state[offset];
 		}
 		private int getObjectType(int offset)
 		{
-			return state[offset+1];
+			return offset + 1 >= this.state.Length ? -1 : this.state[offset+1];
 		}
 		private ulong getStreamId(Byte[] stream)
 		{
@@ -82,21 +83,42 @@ namespace CrazyArcade.CAFrameWork.UDPUpdateSystem
 		{
 			mu.WaitOne();
 			int offset = 8;
-			for (int i = 0; i < 256; i++) {
+			for (int i = 0; i < 255; i++)
+			{
 				int id = this.getObjectID(offset);
 				int objtype = this.getObjectType(offset);
-				if (id != i) this.entities[i] = null;
-				else if (objtype != this.entities[i].GetType()) (offset, this.entities[i]) = make(this.state, offset);
+				if (id != i)
+				{
+					this.sceneDelegate.ToRemoveEntity(this.entities[i]);
+					this.entities[i] = null;
+				}
+				else if (this.entities[i] == null)
+				{
+					(offset, this.entities[i]) = make(offset);
+					this.sceneDelegate.ToAddEntity(this.entities[i]);	//add new
+				} else if (objtype != this.entities[i].GetType())
+				{
+					this.sceneDelegate.ToRemoveEntity(this.entities[i]);	//remove old 
+					(offset, this.entities[i]) = make(offset);
+					this.sceneDelegate.ToAddEntity(this.entities[i]);		//add new
+				}
 				else offset = this.entities[i].UpdateFieldWithStream(this.state, offset);
 			}
 			mu.ReleaseMutex();
 		}
-		private static (int, IDeserializable) make(Byte[] stream, int offset)
+		private (int, IDeserializable) make(int offset)
 		{
+			switch (this.getObjectType(offset))
+			{
+				case BLOCK_TYPE:
+					return (offset + 5, new DefaultBlock(
+						new Vector2(this.state[offset + 3], this.state[offset + 4]),
+						CreateLevel.LevelItem.StonePosition));
+			}
 			return (offset, null);
 		}
-
-		public static int BlockType() => 0;
+		const int BLOCK_TYPE = 0;
+		public static int BlockType() => BLOCK_TYPE;
 	}
 }
 
