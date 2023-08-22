@@ -25,8 +25,8 @@ int main(void){
     
     // Set port and IP:
     server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(34254);
-    server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    server_addr.sin_port = htons(8080);
+    server_addr.sin_addr.s_addr = inet_addr("45.77.159.179");
     
     // Get input from the user:
     // Send the message to server:
@@ -56,4 +56,5 @@ int main(void){
     
     return 0;
 }
+
 

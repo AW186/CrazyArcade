@@ -24,7 +24,7 @@ unsafe fn cpp_new<T>(obj: T) -> *mut T {
 fn main() {
     println!("hello");
     let (send_from_server, recv_from_server) = mpsc::channel::<u8>();
-    let server: CAUdpServer = CAUdpServer::new(String::from("127.0.0.1:34254")).unwrap();
+    let server: CAUdpServer = CAUdpServer::new(String::from("0.0.0.0:8080")).unwrap();
     let make_server_send = server.run(send_from_server);
     let game: Rc<RefCell<dyn IGame>> = Rc::new(RefCell::new(CAGame::new(vec![
         Rc::new(RefCell::new(InputSystem::new(recv_from_server))),
