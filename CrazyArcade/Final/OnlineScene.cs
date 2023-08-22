@@ -59,6 +59,11 @@ namespace CrazyArcade.Final
         {
 			UdpClient udpClient = new UdpClient(11000);
 			udpClient.Connect("127.0.0.1", 8080);
+            udpClient.SendAsync(new Byte[1], 1);
+			udpClient.SendAsync(new Byte[1], 1);
+			udpClient.SendAsync(new Byte[1], 1);
+			udpClient.SendAsync(new Byte[1], 1);
+			udpClient.SendAsync(new Byte[1], 1);
 			this.systems.Add(new UDPUserInputSystem(udpClient));
 			this.systems.Add(new UDPUpdateSystem(udpClient, this));
 			//this.systems.Add(new CASoundSystem());
