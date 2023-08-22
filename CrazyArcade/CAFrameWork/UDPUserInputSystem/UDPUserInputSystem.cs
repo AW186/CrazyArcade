@@ -33,6 +33,7 @@ namespace CrazyArcade.CAFrameWork.UDPUserInputSystem
 
 		public void Update(GameTime time)
 		{
+			Console.WriteLine("Prep sending");
 			Byte content = 0;
 			foreach (UDPInputSource source in inputSources)
 			{
@@ -41,6 +42,7 @@ namespace CrazyArcade.CAFrameWork.UDPUserInputSystem
 			Byte[] buf = new Byte[1];
 			buf[0] = content;
 			client.Send(buf, 1);
+			Console.WriteLine("Sent");
 		}
 	}
 }

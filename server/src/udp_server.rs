@@ -74,7 +74,6 @@ impl CAUdpServer {
                     continue;
                 }
                 // Game state
-                println!("game state");
                 for player_addr in &playerlist {
                     if let Err(err) = sock.send_to(&data, player_addr) {
                         print!("Send to client Err {}", err);

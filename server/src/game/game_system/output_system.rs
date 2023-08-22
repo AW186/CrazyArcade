@@ -49,7 +49,7 @@ impl IGameSystem for OutputSystem {
             println!("Write err: {}", err);
         }
         let mut idx: u8 = 0;
-        println!("obj len: {}", self.output_objs.len());
+        // println!("obj len: {}", self.output_objs.len());
         for obj in &self.output_objs {
             if let Some(obj) = obj {
                 stream.push(idx);   //object id
@@ -60,7 +60,7 @@ impl IGameSystem for OutputSystem {
             }
             idx += 1;
         }
-        println!("sending {} with size {}", self.state_id, stream.len());
+        // println!("sending {} with size {}", self.state_id, stream.len());
         if let Err(err) = self.make_server_send.send(stream) {
             println!("send error: {}", err);
         }
