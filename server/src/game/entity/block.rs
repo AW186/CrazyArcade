@@ -1,7 +1,9 @@
 use crate::game::game_system::output_system::serializable::ISerializable;
 use crate::constant::entity_type;
 use crate::constant::entity_traits;
-
+use crate::game::IGameDelegate;
+use std::cell::RefCell;
+use std::rc::Rc;
 use std::vec::Vec;
 
 use super::EntityTraits;
@@ -65,6 +67,9 @@ impl IEntity for Block {
             entity_traits::BLOCK_TRAIT => EntityTraits::EBlock(self),
             _ => EntityTraits::Nil,
         }
+    }
+    fn set_game_delegate(&mut self, _: Rc<RefCell<dyn IGameDelegate>>){
+
     }
 }
 
