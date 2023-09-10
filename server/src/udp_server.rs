@@ -60,6 +60,7 @@ impl CAUdpServer {
         thread::spawn(move || {
             let mut playerlist: Vec<SocketAddr> = Vec::new();
             loop {
+                print!("upd waiting for recv channel (from game)");
                 let data = match receiver.recv() {
                     Ok(data) => data,
                     Err(err) => panic!("Problem receive: {:?}", err),

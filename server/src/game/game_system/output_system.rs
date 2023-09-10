@@ -60,7 +60,10 @@ impl IGameSystem for OutputSystem {
             }
             idx += 1;
         }
-        // println!("sending {} with size {}", self.state_id, stream.len());
+        println!("sending {} with size {}", self.state_id, stream.len());
+        for b in &stream[8..] {
+            print!("{}, ", b);
+        }
         if let Err(err) = self.make_server_send.send(stream) {
             println!("send error: {}", err);
         }
@@ -83,6 +86,7 @@ impl IGameSystem for OutputSystem {
     fn remove(&mut self, entity: *mut dyn IEntity) {
         unsafe {
             if let EntityTraits::ESerializable(entity) = (*entity).down_cast(SERIALIZABLE_TRAIT) {
+                print!("remove in output");
                 let idx: usize = (*entity).get_id().into();
                 self.output_objs[idx] = None;
                 self.free_list[idx] = self.head;

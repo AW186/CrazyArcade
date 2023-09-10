@@ -120,8 +120,8 @@ impl IGameSystem for InputSystem {
             }
         }
     }
-    fn remove(&mut self, entity: *mut dyn IEntity) {
-        
+    fn remove(&mut self, _entity: *mut dyn IEntity) {
+               
     }
 }
 

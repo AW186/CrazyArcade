@@ -2,8 +2,6 @@ use crate::game::game_system::output_system::serializable::ISerializable;
 use crate::constant::entity_type;
 use crate::constant::entity_traits;
 use crate::game::IGameDelegate;
-use std::cell::RefCell;
-use std::rc::Rc;
 use std::vec::Vec;
 
 use super::EntityTraits;
@@ -16,6 +14,7 @@ pub trait IBlock: ISerializable {
 }
 
 pub struct Block {
+    entity_id: u64,
     type_id: u8,
     x: u8,
     y: u8,
@@ -25,6 +24,7 @@ pub struct Block {
 impl Block {
     pub fn new(type_id: u8, x: u8, y: u8) -> Block {
         return Block {
+            entity_id: 0,
             type_id: type_id,
             x: x,
             y: y,
@@ -68,8 +68,14 @@ impl IEntity for Block {
             _ => EntityTraits::Nil,
         }
     }
-    fn set_game_delegate(&mut self, _: Rc<RefCell<dyn IGameDelegate>>){
+    fn set_game_delegate(&mut self, _: *mut dyn IGameDelegate){
 
+    }
+    fn get_entity_id(&self) -> u64 {
+        self.entity_id
+    }
+    fn set_entity_id(&mut self, id: u64) {
+        self.entity_id = id;
     }
 }
 

@@ -7,6 +7,7 @@ use crate::game::CAGame;
 use crate::game::IGame;
 use crate::game::game_system::input_system::InputSystem;
 use crate::game::game_system::output_system::OutputSystem;
+use crate::game::game_system::bomb_system::BombSystem;
 use crate::udp_server::CAUdpServer;
 use crate::game::entity::*;
 use core::time;
@@ -26,22 +27,32 @@ fn main() {
     let (send_from_server, recv_from_server) = mpsc::channel::<u8>();
     let server: CAUdpServer = CAUdpServer::new(String::from("0.0.0.0:8080")).unwrap();
     let make_server_send = server.run(send_from_server);
-    let game: Rc<RefCell<dyn IGame>> = Rc::new(RefCell::new(CAGame::new(vec![
-        Rc::new(RefCell::new(InputSystem::new(recv_from_server))),
-        Rc::new(RefCell::new(OutputSystem::new(make_server_send)))
-    ])));
+    let game: *mut CAGame;
     unsafe {
-        game.borrow_mut().setup(vec![
+        game = cpp_new(
+            CAGame::new(vec![
+                        Rc::new(RefCell::new(InputSystem::new(recv_from_server))),
+                        Rc::new(RefCell::new(OutputSystem::new(make_server_send))),
+                        Rc::new(RefCell::new(BombSystem::new())),
+        ]));
+        (*game).ref_self = Some(game);
+    }
+    unsafe {
+        (*game).setup(vec![
             cpp_new(block::Block::new(0, 0, 0)),
             cpp_new(block::Block::new(0, 1, 0)),
             cpp_new(block::Block::new(0, 2, 0)),
+            cpp_new(block::Block::new(0, 3, 0)),
+            cpp_new(bomb::Bomb::new(3, 3, 3)),
         ]);
     }
     
     let millis = time::Duration::from_millis(1);
     loop {
         thread::sleep(millis);
-        game.borrow_mut().update();
+        unsafe {
+            (*game).update();
+        }
     }
 }
 
