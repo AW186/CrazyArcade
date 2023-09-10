@@ -3,6 +3,7 @@ using CrazyArcade.Boss;
 using CrazyArcade.CAFramework;
 using CrazyArcade.CAFrameWork.GridBoxSystem;
 using CrazyArcade.CAFrameWork.SoundEffectSystem;
+using CrazyArcade.CAFrameWork.UDPUpdateSystem;
 using CrazyArcade.Content;
 using CrazyArcade.Final;
 using CrazyArcade.GameGridSystems;
@@ -18,7 +19,7 @@ using System.Threading.Tasks;
 
 namespace CrazyArcade.BombFeature
 {
-    public class WaterBomb : CAGridBoxEntity, IGridPlayerCollidable, IExplosionCollidable, IExplodable, IBossCollidable
+    public class WaterBomb : CAGridBoxEntity, IGridPlayerCollidable, IExplosionCollidable, IExplodable, IBossCollidable, IDeserializable
     {
         int BlastLength;
         float DetonateTimer;
@@ -70,6 +71,7 @@ namespace CrazyArcade.BombFeature
         public IExplosionDetector Detector { get => detector; set => detector = value; }
 
         private bool canExplode = true;
+        private bool online = false;
         public bool CanExplode => canExplode;
 
         public Rectangle hitBox => new Rectangle(this.X, this.Y, 40, 40);
@@ -83,8 +85,22 @@ namespace CrazyArcade.BombFeature
             bombPosition.Floor();
             return bombPosition;
         }
-        
-        public WaterBomb(Vector2 grid, int BlastLength, IBombCollectable character) : base(new GridBoxPosition(getBombPosition(grid), (int)GridObjectDepth.Box))
+		public WaterBomb(bool online, Vector2 grid, int BlastLength) : base(new GridBoxPosition(getBombPosition(grid), (int)GridObjectDepth.Box))
+		{
+			gamePos = getBombPosition(grid);
+            this.online = online;
+			this.BlastLength = BlastLength;
+			AnimationFrames = GetAnimationFrames();
+			DetonateTime = 0;
+			//DetonateTimer = 1450;
+			DetonateTimer = 1812;
+			this.spriteAnims = new SpriteAnimation(TextureSingleton.GetBallons(), AnimationFrames, 8);
+			this.spriteAnims.SetScale(CAGameGridSystems.BlockLength * 1.08f / 42f);
+			this.spriteAnims.Position = new Vector2(0, 4);
+			internalRectangle = new Rectangle(X, Y, 40, 40);
+			move = new Vector2[4] { new Vector2(0, -speed), new Vector2(-speed, 0), new Vector2(0, speed), new Vector2(speed, 0) };
+		}
+		public WaterBomb(Vector2 grid, int BlastLength, IBombCollectable character) : base(new GridBoxPosition(getBombPosition(grid), (int)GridObjectDepth.Box))
         {
             gamePos = getBombPosition(grid);
 
@@ -129,8 +145,8 @@ namespace CrazyArcade.BombFeature
         }
         public override void Update(GameTime time)
         {
-            if(this.isMoving) updatePosition(time);
-            Detonate(time);
+            if (this.isMoving) updatePosition(time);
+            if (!this.online) Detonate(time);
         }
 
         private void updatePosition(GameTime time)
@@ -150,7 +166,7 @@ namespace CrazyArcade.BombFeature
 
         public override void Load()
         {
-            owner.SpendBomb();
+            if (this.owner != null) owner.SpendBomb();
         }
         private void DeleteSelf()
         {
@@ -209,7 +225,7 @@ namespace CrazyArcade.BombFeature
         public override void Deload()
         {
             base.Deload();
-            owner.RecollectBomb();
+            if (owner != null) owner.RecollectBomb();
         }
         public bool Collide(IExplosion bomb)
         {
@@ -259,5 +275,19 @@ namespace CrazyArcade.BombFeature
             set.Add(this.Position.toPoint());
             return set;
         }
-    }
+
+		public int UpdateFieldWithStream(byte[] stream, int offset)
+		{
+            if ((stream[4] & 0b10000000) != 0)
+            {
+                this.explode();
+            }
+            return offset + 5;
+		}
+
+		int IDeserializable.GetType()
+		{
+            return UDPUpdateSystem.BombType();
+		}
+	}
 }

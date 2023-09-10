@@ -110,6 +110,7 @@ namespace CrazyArcade.BombFeature
 
         public void Collide(IBossCollideBehaviour boss)
         {
+            if (this.owner == null) return;
             if (!(this.owner is OctopusEnemy  && boss is OctopusEnemy))
             {
                 boss.HurtBoss();
