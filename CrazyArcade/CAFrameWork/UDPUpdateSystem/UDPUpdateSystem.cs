@@ -39,7 +39,7 @@ namespace CrazyArcade.CAFrameWork.UDPUpdateSystem
 					if (newID > stateID)
 					{
 						stateID = newID;
-						Console.WriteLine(newID);
+						//Console.WriteLine(newID);
 						mu.WaitOne();
 						this.state = stream;
 						mu.ReleaseMutex();
@@ -120,9 +120,10 @@ namespace CrazyArcade.CAFrameWork.UDPUpdateSystem
 						CreateLevel.LevelItem.StonePosition));
 				case BOMB_TYPE:
 					if ((this.state[offset + 4] & 0b10000000) == 1) return (offset + 5, null);
+					Console.WriteLine(" " + (int)this.state[2] + " " + (int)this.state[3]);
 					return (offset + 5, new WaterBomb(true,
-						new Vector2((float)this.state[2], (float)this.state[3]),
-						(int)this.state[4] & 0b01111111));
+						new Vector2((int)this.state[offset + 2], (int)this.state[offset + 3]),
+						(int)this.state[offset + 4] & 0b01111111));
 			}
 			return (offset, null);
 		}

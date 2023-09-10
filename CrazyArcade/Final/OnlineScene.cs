@@ -69,24 +69,25 @@ namespace CrazyArcade.Final
 			//this.systems.Add(new CASoundSystem());
 			//this.systems.Add(new InputSystems());
 			//this.systems.Add(new GridBoxSystem());
-            //this.systems.Add(new BombCollisionSystem(this, new Rectangle(0, 0, 15, 15)));
+            this.systems.Add(new BombCollisionSystem(this, new Rectangle(0, 0, 15, 15)));
             this.systems.Add(gridSystems);
-            //this.systems.Add(new PlayerCollisionSystem());
-            ////this.systems.Add(new LevelManager(this, new DemoController()));
-            //level = new Level(this, fileName);
-            //foreach (IEntity entity in level.DrawLevel())
-            //{
-            //    if (entity is PlayerCharacter)
-            //    {
-            //        players.Add(entity as PlayerCharacter);
-            //        UI_Singleton.ChangeComponentText("lifeCounter", "count", "Lives: " + (entity as PlayerCharacter).lives);
-            //        UI_Singleton.ChangeComponentText("needle", "itemCount", "X" + (entity as PlayerCharacter).needles);
-            //        UI_Singleton.ChangeComponentText("shield", "itemCount", "X" + (entity as PlayerCharacter).shields);
-            //    }
-            //    this.AddSprite(entity);
-            //}
-        }
-        public override void LoadSprites()
+			this.systems.Add(new CAGameLogicSystem());
+			//this.systems.Add(new PlayerCollisionSystem());
+			////this.systems.Add(new LevelManager(this, new DemoController()));
+			//level = new Level(this, fileName);
+			//foreach (IEntity entity in level.DrawLevel())
+			//{
+			//    if (entity is PlayerCharacter)
+			//    {
+			//        players.Add(entity as PlayerCharacter);
+			//        UI_Singleton.ChangeComponentText("lifeCounter", "count", "Lives: " + (entity as PlayerCharacter).lives);
+			//        UI_Singleton.ChangeComponentText("needle", "itemCount", "X" + (entity as PlayerCharacter).needles);
+			//        UI_Singleton.ChangeComponentText("shield", "itemCount", "X" + (entity as PlayerCharacter).shields);
+			//    }
+			//    this.AddSprite(entity);
+			//}
+		}
+		public override void LoadSprites()
         {
             
             //This may not be neccessary

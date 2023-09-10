@@ -278,10 +278,12 @@ namespace CrazyArcade.BombFeature
 
 		public int UpdateFieldWithStream(byte[] stream, int offset)
 		{
-            if ((stream[4] & 0b10000000) != 0)
+            //Console.WriteLine("updating: " + stream[offset + 4]);
+            if ((stream[offset + 4] & 0b10000000) != 0)
             {
-                this.explode();
-            }
+                Console.WriteLine("explode");
+                detector.Ignite(this);
+			}
             return offset + 5;
 		}
 
