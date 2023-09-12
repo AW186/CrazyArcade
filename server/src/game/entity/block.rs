@@ -1,3 +1,4 @@
+use crate::game::game_system::bomb_system::IExplosionCollidable;
 use crate::game::game_system::output_system::serializable::ISerializable;
 use crate::constant::entity_type;
 use crate::constant::entity_traits;
@@ -58,6 +59,19 @@ impl IBlock for Block {
     fn get_y(&self) -> u8 {
         return self.y;
     }
+}
+
+impl IExplosionCollidable for Block {
+    fn get_x(&self) -> u8 {
+        return self.x;
+    }
+    fn get_y(&self) -> u8 {
+        return self.y;
+    }
+    fn collide(&mut self) -> bool {
+        true
+    }
+
 }
 
 impl IEntity for Block {

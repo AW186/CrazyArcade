@@ -13,7 +13,8 @@ static DIR: [[i8; 2]; 4] = [
 ];
 
 pub trait IExplosionCollidable {
-    fn collide(&mut self) -> bool;
+    fn collide(&mut self) -> bool; // return true to show that explosion could not pass through
+                                   // this collision
     fn get_x(&self) -> u8;
     fn get_y(&self) -> u8;
 }
