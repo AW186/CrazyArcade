@@ -1,5 +1,6 @@
 pub mod block;
 pub mod bomb;
+pub mod player;
 use crate::game::game_system::bomb_system::*;
 use crate::game::game_system::input_system::IInputListener;
 use crate::game::game_system::output_system::serializable::ISerializable;
