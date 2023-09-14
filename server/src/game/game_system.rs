@@ -1,6 +1,7 @@
 pub mod output_system;
 pub mod input_system;
 pub mod bomb_system;
+pub mod player_interaction_system;
 use crate::game::entity::IEntity;
 
 pub trait IGameSystem {

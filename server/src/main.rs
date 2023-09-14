@@ -8,6 +8,7 @@ use crate::game::IGame;
 use crate::game::game_system::input_system::InputSystem;
 use crate::game::game_system::output_system::OutputSystem;
 use crate::game::game_system::bomb_system::BombSystem;
+use crate::game::game_system::player_interaction_system::PlayerInteractionSystem;
 use crate::udp_server::CAUdpServer;
 use crate::game::entity::*;
 use core::time;
@@ -34,6 +35,7 @@ fn main() {
                         Rc::new(RefCell::new(InputSystem::new(recv_from_server))),
                         Rc::new(RefCell::new(OutputSystem::new(make_server_send))),
                         Rc::new(RefCell::new(BombSystem::new())),
+                        Rc::new(RefCell::new(PlayerInteractionSystem::new())),
         ]));
         (*game).ref_self = Some(game);
     }
@@ -43,7 +45,54 @@ fn main() {
             cpp_new(block::Block::new(0, 1, 0)),
             cpp_new(block::Block::new(0, 2, 0)),
             cpp_new(block::Block::new(0, 3, 0)),
+            cpp_new(block::Block::new(0, 4, 0)),
+            cpp_new(block::Block::new(0, 5, 0)),
+            cpp_new(block::Block::new(0, 6, 0)),
+            cpp_new(block::Block::new(0, 7, 0)),
+            cpp_new(block::Block::new(0, 8, 0)),
+            cpp_new(block::Block::new(0, 9, 0)),
+            cpp_new(block::Block::new(0, 10, 0)),
+            cpp_new(block::Block::new(0, 11, 0)),
+
+            cpp_new(block::Block::new(0, 11, 0)),
+            cpp_new(block::Block::new(0, 11, 1)),
+            cpp_new(block::Block::new(0, 11, 2)),
+            cpp_new(block::Block::new(0, 11, 3)),
+            cpp_new(block::Block::new(0, 11, 4)),
+            cpp_new(block::Block::new(0, 11, 5)),
+            cpp_new(block::Block::new(0, 11, 6)),
+            cpp_new(block::Block::new(0, 11, 7)),
+            cpp_new(block::Block::new(0, 11, 8)),
+            cpp_new(block::Block::new(0, 11, 9)),
+            cpp_new(block::Block::new(0, 11, 10)),
+            cpp_new(block::Block::new(0, 11, 11)),
+
+            cpp_new(block::Block::new(0, 0, 1)),
+            cpp_new(block::Block::new(0, 0, 2)),
+            cpp_new(block::Block::new(0, 0, 3)),
+            cpp_new(block::Block::new(0, 0, 4)),
+            cpp_new(block::Block::new(0, 0, 5)),
+            cpp_new(block::Block::new(0, 0, 6)),
+            cpp_new(block::Block::new(0, 0, 7)),
+            cpp_new(block::Block::new(0, 0, 8)),
+            cpp_new(block::Block::new(0, 0, 9)),
+            cpp_new(block::Block::new(0, 0, 10)),
+            cpp_new(block::Block::new(0, 0, 11)),
+ 
+            cpp_new(block::Block::new(0, 1, 11)),
+            cpp_new(block::Block::new(0, 2, 11)),
+            cpp_new(block::Block::new(0, 3, 11)),
+            cpp_new(block::Block::new(0, 4, 11)),
+            cpp_new(block::Block::new(0, 5, 11)),
+            cpp_new(block::Block::new(0, 6, 11)),
+            cpp_new(block::Block::new(0, 7, 11)),
+            cpp_new(block::Block::new(0, 8, 11)),
+            cpp_new(block::Block::new(0, 9, 11)),
+            cpp_new(block::Block::new(0, 10, 11)),
+
             cpp_new(bomb::Bomb::new(3, 3, 3)),
+            cpp_new(player::Player::new(2, 2)),
+            cpp_new(player::Player::new(5, 5)),
         ]);
     }
     

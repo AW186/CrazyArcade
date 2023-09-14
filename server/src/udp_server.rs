@@ -45,8 +45,8 @@ impl CAUdpServer {
                 let (_, src_addr) = sock.recv_from(&mut buf)
     .expect("Didn't receive data");                
                 println!("received data from {}", src_addr);
-                let mut input = buf[0] & 0b00011111 + players[&src_addr];
-                out.send(buf[0]).unwrap();
+                let input = buf[0] & 0b00011111 + players[&src_addr];
+                out.send(input).unwrap();
             }
         });
     }
@@ -66,11 +66,14 @@ impl CAUdpServer {
                     Err(err) => panic!("Problem receive: {:?}", err),
                 };
                 // preparation state
+                if let Ok(addr) = prep_recv.try_recv() {
+                    playerlist.push(addr);
+                }
                 if data.len() == 1 {
-                    if let Ok(addr) = prep_recv.try_recv() {
-                        playerlist.push(addr);
-                    }
                     let idx: usize = data[0].into();
+                    if idx >= playerlist.len() {
+                        continue;
+                    }
                     if let Err(err) = sock.send_to(&data[..], playerlist[idx]) {
                         println!("Sock send error: {}", err);
                     }

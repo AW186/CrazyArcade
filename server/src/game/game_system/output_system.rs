@@ -65,7 +65,7 @@ impl IGameSystem for OutputSystem {
             print!("{}, ", b);
         }
         if let Err(err) = self.make_server_send.send(stream) {
-            println!("send error: {}", err);
+            panic!("send error: {}", err);
         }
     }
 

@@ -8,6 +8,7 @@ use crate::game::entity::block::IBlock;
 use crate::game::IGameDelegate;
 
 use super::game_system::bomb_system::IExplosionCollidable;
+use super::game_system::player_interaction_system::IPlayer;
 
 pub trait IEntity {
     fn down_cast(&mut self, to: u8) -> EntityTraits; // cast to another down stream trait
@@ -22,6 +23,7 @@ pub enum EntityTraits {
     EBlock(*mut dyn IBlock),
     EExploCollidable(*mut dyn IExplosionCollidable),
     EExplodable(*mut dyn IExplodable),
+    EPlayer(*mut dyn IPlayer),
     Nil,
 }
 
