@@ -69,6 +69,7 @@ impl IExplosionCollidable for Block {
         return self.y;
     }
     fn collide(&mut self) -> bool {
+        println!("collide with wall");
         true
     }
 

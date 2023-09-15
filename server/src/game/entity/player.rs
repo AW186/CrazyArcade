@@ -50,6 +50,7 @@ impl IEntity for Player {
             entity_traits::EXPLO_COLLIDE => return EntityTraits::EExploCollidable(self),
             entity_traits::SERIALIZABLE_TRAIT => return EntityTraits::ESerializable(self),
             entity_traits::PLAYER => return EntityTraits::EPlayer(self),
+            entity_traits::INPUT_LISTENER => return EntityTraits::EInputListener(self),
             _ => return EntityTraits::Nil,
         }
     }
@@ -72,6 +73,7 @@ impl IExplosionCollidable for Player {
         return (self.y >> 10) as u8;
     }
     fn collide(&mut self) -> bool {
+        println!("collide with player");
         if let Some(delegate) = &self.game_delegate {
             unsafe {
                 (**delegate).to_remove(self.entity_id);
@@ -91,24 +93,29 @@ impl IInputListener for Player {
         if (self.y >> 10) < MIN {
             self.y = MIN << 10;
         }
+        self.direction = 1;
     }
     fn down(&mut self) {
+        println!("Down");
         self.y += SPEED;
         if (self.y >> 10) > MAX {
             self.y = MAX << 10;
         }
+        self.direction = 2;
     }
     fn left(&mut self) {
         self.x -= SPEED;
         if (self.x >> 10) < MIN {
             self.x = MIN << 10;
         }
+        self.direction = 3;
     }
     fn right(&mut self) {
         self.x += SPEED;
         if (self.x >> 10) > MAX {
             self.x = MAX << 10;
         }
+        self.direction = 4;
     }
     fn bomb(&mut self) {
         if self.bomb_capacity as usize <= self.bomb_cd.len() {
@@ -158,7 +165,6 @@ impl ISerializable for Player {
             println!("Write err: {}", err);
         }
         stream.push(self.direction);
-        println!("player: {}", stream.len());
         return stream;
     }
 }

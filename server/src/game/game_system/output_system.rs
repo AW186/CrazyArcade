@@ -60,10 +60,7 @@ impl IGameSystem for OutputSystem {
             }
             idx += 1;
         }
-        println!("sending {} with size {}", self.state_id, stream.len());
-        for b in &stream[8..] {
-            print!("{}, ", b);
-        }
+        //println!("sent data with size {}", stream.len());
         if let Err(err) = self.make_server_send.send(stream) {
             panic!("send error: {}", err);
         }

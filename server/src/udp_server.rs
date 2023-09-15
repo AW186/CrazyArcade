@@ -25,7 +25,7 @@ impl CAUdpServer {
             //preparation state
             let mut count: u8 = 0;
             let mut players: HashMap<SocketAddr, u8> = HashMap::new();
-            while count < 2 {
+            while players.len() < 1 {
                 let mut buf: [u8; 50] = [0;50];
                 let (_, src_addr) = sock.recv_from(&mut buf)
     .expect("Didn't receive data");
@@ -41,6 +41,7 @@ impl CAUdpServer {
             }
             //game starts here
             loop {
+                println!("game start");
                 let mut buf: [u8; 1] = [0;1];
                 let (_, src_addr) = sock.recv_from(&mut buf)
     .expect("Didn't receive data");                
@@ -60,7 +61,6 @@ impl CAUdpServer {
         thread::spawn(move || {
             let mut playerlist: Vec<SocketAddr> = Vec::new();
             loop {
-                print!("upd waiting for recv channel (from game)");
                 let data = match receiver.recv() {
                     Ok(data) => data,
                     Err(err) => panic!("Problem receive: {:?}", err),

@@ -28,7 +28,7 @@ const UP:           u8 = 1;
 const DOWN:         u8 = 2;
 const LEFT:         u8 = 3;
 const RIGHT:        u8 = 4;
-const BOMB_MASK:    u8 = 4;
+const BOMB_MASK:    u8 = 0b1000;
 
 
 pub trait IInputListener: IEntity {
@@ -91,11 +91,12 @@ impl IGameSystem for InputSystem {
                     break;
                 }
                 Ok(value) => {
-                    println!("input system received: {}", value);
+                    //println!("input system received: {}", value);
                     let id = value >> 5;
                     let id: usize = id.try_into().unwrap();
                     self.inputs[id] = value;
                     self.inputs_time[id] = SystemTime::now();
+                    //println!("id: {}, val: {}", id, self.inputs[id])
                 }
             }
         }

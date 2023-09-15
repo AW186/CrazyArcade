@@ -50,6 +50,7 @@ impl BombSystem {
             let y: u8 = (y+dy*i).try_into().unwrap();
             unsafe {
                 for collidable in &self.collidables {
+                    println!("getting collidable");
                     if (**collidable).get_x() == x && (**collidable).get_y() == y && (**collidable).collide() {
                         break;
                     }
