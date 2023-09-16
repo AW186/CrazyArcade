@@ -43,7 +43,7 @@ impl BombSystem {
     }
     fn detect(&mut self, x: i8, y: i8, len: u8, dx: i8, dy: i8) {
         let mut i: i8 = 1;
-        while i < len.try_into().unwrap() {
+        while i <= len.try_into().unwrap() {
             if x < 0 || y < 0 {
                 break;
             }

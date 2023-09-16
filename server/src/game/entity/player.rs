@@ -95,7 +95,7 @@ impl IInputListener for Player {
     fn down(&mut self) {
         self.y += SPEED;
         if (self.y >> 10) > MAX {
-            self.y = MAX << 10;
+            self.y = ((MAX + 1) << 10) - 1;
         }
         self.direction = 2;
     }
@@ -109,7 +109,7 @@ impl IInputListener for Player {
     fn right(&mut self) {
         self.x += SPEED;
         if (self.x >> 10) > MAX {
-            self.x = MAX << 10;
+            self.x = ((MAX + 1) << 10) - 1;
         }
         self.direction = 4;
     }

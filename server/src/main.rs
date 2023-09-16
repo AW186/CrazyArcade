@@ -93,7 +93,6 @@ fn main() {
 
             cpp_new(player::Player::new(2, 2)),
             cpp_new(player::Player::new(5, 5)),
-            cpp_new(bomb::Bomb::new(1, 1, 3, &mut bomb_count as *mut u8)),
         ]);
     }
     
