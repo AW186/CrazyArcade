@@ -5,7 +5,6 @@ use crate::constant::*;
 use crate::game::game_system::bomb_system::*;
 use crate::game::IGameDelegate;
 use crate::game::game_system::output_system::serializable::ISerializable;
-use std::sync::mpsc::Sender;
 use std::time::Instant;
 
 pub struct Bomb {
@@ -99,7 +98,7 @@ impl IExplodable for Bomb {
         self.ignite_delegate = Some(delegate);
     }
     fn try_explode(&mut self) {
-        if self.delay.elapsed().as_secs() >= 5 && !self.exploded {
+        if self.delay.elapsed().as_secs() >= 2 && !self.exploded {
             unsafe {
                 self.explode();
             }

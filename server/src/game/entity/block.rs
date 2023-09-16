@@ -80,6 +80,7 @@ impl IEntity for Block {
         return match to {
             entity_traits::SERIALIZABLE_TRAIT => EntityTraits::ESerializable(self),
             entity_traits::BLOCK_TRAIT => EntityTraits::EBlock(self),
+            entity_traits::EXPLO_COLLIDE => EntityTraits::EExploCollidable(self),
             _ => EntityTraits::Nil,
         }
     }

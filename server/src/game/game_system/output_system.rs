@@ -83,7 +83,6 @@ impl IGameSystem for OutputSystem {
     fn remove(&mut self, entity: *mut dyn IEntity) {
         unsafe {
             if let EntityTraits::ESerializable(entity) = (*entity).down_cast(SERIALIZABLE_TRAIT) {
-                print!("remove in output");
                 let idx: usize = (*entity).get_id().into();
                 self.output_objs[idx] = None;
                 self.free_list[idx] = self.head;

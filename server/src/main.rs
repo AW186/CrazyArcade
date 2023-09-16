@@ -24,9 +24,6 @@ unsafe fn cpp_new<T>(obj: T) -> *mut T {
     res
 }
 fn main() {
-    unsafe {
-        let mplayer = cpp_new(player::Player::new(0, 0));
-    }
     println!("hello");
     let (send_from_server, recv_from_server) = mpsc::channel::<u8>();
     let server: CAUdpServer = CAUdpServer::new(String::from("0.0.0.0:8080")).unwrap();
@@ -42,6 +39,7 @@ fn main() {
         ]));
         (*game).ref_self = Some(game);
     }
+    let mut bomb_count: u8 = 3;
     unsafe {
         (*game).setup(vec![
             cpp_new(block::Block::new(0, 0, 0)),
@@ -95,6 +93,7 @@ fn main() {
 
             cpp_new(player::Player::new(2, 2)),
             cpp_new(player::Player::new(5, 5)),
+            cpp_new(bomb::Bomb::new(1, 1, 3, &mut bomb_count as *mut u8)),
         ]);
     }
     

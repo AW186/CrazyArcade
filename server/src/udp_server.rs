@@ -29,7 +29,7 @@ impl CAUdpServer {
                 let mut buf: [u8; 50] = [0;50];
                 let (_, src_addr) = sock.recv_from(&mut buf)
     .expect("Didn't receive data");
-                println!("received data from {}", src_addr);
+                //println!("received data from {}", src_addr);
                 if let Some(id) = players.get(&src_addr) {
                     socket_out.send(vec![*id]).unwrap();
                 } else {
@@ -41,11 +41,10 @@ impl CAUdpServer {
             }
             //game starts here
             loop {
-                println!("game start");
+                //println!("game start");
                 let mut buf: [u8; 1] = [0;1];
                 let (_, src_addr) = sock.recv_from(&mut buf)
     .expect("Didn't receive data");                
-                println!("received data from {}", src_addr);
                 let input = buf[0] & 0b00011111 + players[&src_addr];
                 out.send(input).unwrap();
             }

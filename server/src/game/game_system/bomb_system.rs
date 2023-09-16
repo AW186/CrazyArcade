@@ -51,9 +51,8 @@ impl BombSystem {
             let y: u8 = (y+dy*i).try_into().unwrap();
             unsafe {
                 for collidable in &self.collidables {
-                    println!("getting collidable");
                     if (**collidable).get_x() == x && (**collidable).get_y() == y && (**collidable).collide() {
-                        break;
+                        return;
                     }
                 }
             }
@@ -96,13 +95,18 @@ impl IGameSystem for BombSystem {
             if let EntityTraits::EExplodable(e) = (*entity).down_cast(constant::entity_traits::EXPLODABLE) {
                 let delegate = self as *mut dyn IIgniteDelegate;
                 (*e).set_ignite_delegate(delegate);
-                self.explodables.insert(e);
+                let mut contains = false;
                 for explodable in &self.explodables {
                     if (**explodable).get_x() == (*e).get_x() &&
                         (**explodable).get_y() == (*e).get_y() {
-                        (*e).del();
+                        contains = true;
                         break;
                     }
+                }
+                if !contains {
+                    self.explodables.insert(e);
+                } else {
+                    (*e).del();
                 }
             }
         }
