@@ -22,8 +22,10 @@ namespace CrazyArcade.CAFrameWork.GameStates
         private int winner;
         public PVPSummaryScene(IGameDelegate gameRef, int winner)
         {
+            this.winner = winner;
             buttons = new Button[2];
             buttons[0] = new Button("Game Over Main Menu", "Main Menu", Button.GetBasePosition(2f), gameRef.NewGame);
+            buttons[1] = new Button("Game Over Restart", "Restart", Button.GetBasePosition(3f), gameRef.StartGame);
             this.gameRef = gameRef;
             this.Load();
         }

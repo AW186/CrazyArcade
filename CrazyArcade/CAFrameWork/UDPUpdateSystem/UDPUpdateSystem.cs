@@ -65,14 +65,14 @@ namespace CrazyArcade.CAFrameWork.UDPUpdateSystem
 
 		public void RemoveAll()
 		{
-			Console.WriteLine("Remove");
+			//Console.WriteLine("Remove");
 		}
 
 		public void RemoveSprite(IEntity sprite)
 		{
 			if (sprite is OnlineCharacter)
 			{
-				gameRef.Scene = new GameOverScene(gameRef);
+				gameRef.Scene = new PVPSummaryScene(gameRef, (sprite as OnlineCharacter).PlayerID);
 			}
 		}
 

@@ -58,7 +58,7 @@ namespace CrazyArcade.Final
         public override void LoadSystems()
         {
 			UdpClient udpClient = new UdpClient(11000);
-			udpClient.Connect("10.0.0.128", 8080);
+			udpClient.Connect("172.233.214.197", 8080);
             udpClient.SendAsync(new Byte[1], 1);
 			udpClient.SendAsync(new Byte[1], 1);
 			udpClient.SendAsync(new Byte[1], 1);
