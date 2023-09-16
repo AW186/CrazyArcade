@@ -23,9 +23,10 @@ pub trait IIgniteDelegate {
     fn ignite(&mut self, x: u8, y: u8, len: u8);
 }
 
-pub trait IExplodable {
+pub trait IExplodable: IExplosionCollidable {
     fn set_ignite_delegate(&mut self, delegate: *mut dyn IIgniteDelegate);
     fn try_explode(&mut self);
+    fn del(&mut self);
 }
 
 pub struct BombSystem {
@@ -96,6 +97,13 @@ impl IGameSystem for BombSystem {
                 let delegate = self as *mut dyn IIgniteDelegate;
                 (*e).set_ignite_delegate(delegate);
                 self.explodables.insert(e);
+                for explodable in &self.explodables {
+                    if (**explodable).get_x() == (*e).get_x() &&
+                        (**explodable).get_y() == (*e).get_y() {
+                        (*e).del();
+                        break;
+                    }
+                }
             }
         }
     }

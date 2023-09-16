@@ -1,7 +1,4 @@
 
-use std::collections::LinkedList;
-use std::time::Instant;
-
 use byteorder::{BigEndian, WriteBytesExt};
 use super::IEntity;
 use super::bomb::Bomb;
@@ -22,7 +19,7 @@ pub struct Player {
     direction: u8,
     bomb_capacity: u8,
     blast_len: u8,
-    bomb_cd: LinkedList<Instant>,
+    bomb_used: u8,
     game_delegate: Option<*mut dyn IGameDelegate>,
     entity_id: u64,
     obj_id: u8,
@@ -36,7 +33,7 @@ impl Player {
             direction: 0,
             bomb_capacity: 2,
                 blast_len: 2,
-            bomb_cd: LinkedList::new(),
+            bomb_used: 0,
             game_delegate: None,
             entity_id: 0,
             obj_id: 0,
@@ -118,13 +115,13 @@ impl IInputListener for Player {
         self.direction = 4;
     }
     fn bomb(&mut self) {
-        if self.bomb_capacity as usize <= self.bomb_cd.len() {
+        if self.bomb_capacity <= self.bomb_used {
             return;
         }
         if let Some(delegate) = &self.game_delegate {
             unsafe {
-                (**delegate).to_add(cpp_new(Bomb::new(self.get_x(), self.get_y(), self.blast_len)));
-                self.bomb_cd.push_back(Instant::now());
+                (**delegate).to_add(cpp_new(Bomb::new(self.get_x(), self.get_y(), self.blast_len, &mut self.bomb_used as *mut u8)));
+                self.bomb_used += 1;
             }
         }
     }
@@ -132,17 +129,6 @@ impl IInputListener for Player {
 
 impl IPlayer for Player {
     fn update(&mut self) {
-        loop {
-            if let Some(cd) = self.bomb_cd.front() {
-                if cd.elapsed().as_secs() >= 3 {
-                    self.bomb_cd.pop_front();
-                } else {
-                    break;
-                }
-            } else {
-                break;
-            }
-        }
     }
 }
 

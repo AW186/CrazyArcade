@@ -24,6 +24,9 @@ unsafe fn cpp_new<T>(obj: T) -> *mut T {
     res
 }
 fn main() {
+    unsafe {
+        let mplayer = cpp_new(player::Player::new(0, 0));
+    }
     println!("hello");
     let (send_from_server, recv_from_server) = mpsc::channel::<u8>();
     let server: CAUdpServer = CAUdpServer::new(String::from("0.0.0.0:8080")).unwrap();
@@ -90,7 +93,6 @@ fn main() {
             cpp_new(block::Block::new(0, 9, 11)),
             cpp_new(block::Block::new(0, 10, 11)),
 
-            cpp_new(bomb::Bomb::new(3, 3, 3)),
             cpp_new(player::Player::new(2, 2)),
             cpp_new(player::Player::new(5, 5)),
         ]);

@@ -5,6 +5,7 @@ use crate::constant::*;
 use crate::game::game_system::bomb_system::*;
 use crate::game::IGameDelegate;
 use crate::game::game_system::output_system::serializable::ISerializable;
+use std::sync::mpsc::Sender;
 use std::time::Instant;
 
 pub struct Bomb {
@@ -17,10 +18,12 @@ pub struct Bomb {
     game_delegate: Option<*mut dyn IGameDelegate>,
     delay: Instant,
     exploded: bool,
+    player_bomb_use: *mut u8,
+    deleted: bool,
 }
 
 impl Bomb {
-    pub fn new(in_x: u8, in_y: u8, in_len: u8) -> Bomb {
+    pub fn new(in_x: u8, in_y: u8, in_len: u8, bomb_use: *mut u8) -> Bomb {
         return Bomb {
             entity_id: 0,
             obj_id: 0,
@@ -31,6 +34,8 @@ impl Bomb {
             game_delegate: None,
             delay: Instant::now(),
             exploded: false,
+            deleted: false,
+            player_bomb_use: bomb_use,
         };
     }
     unsafe fn explode(&mut self) {
@@ -100,14 +105,22 @@ impl IExplodable for Bomb {
             }
         }
         if self.exploded && self.delay.elapsed().as_millis() > 500 {
-            if let Some(delegate) = self.game_delegate {
-                unsafe {
-                    println!("delete");
-                    (*delegate).to_remove(self.entity_id);    
-                }
-            } else {
-                println!("no delegate");
+            self.del();
+        }
+    }
+    fn del(&mut self) {
+        if !self.deleted {
+            self.deleted = true;
+            unsafe {
+                (*self.player_bomb_use) -= 1
             }
+        }
+        if let Some(delegate) = &self.game_delegate {
+            unsafe {
+                (**delegate).to_remove(self.entity_id);
+            }
+        } else {
+            println!("no delegate");
         }
     }
 }
