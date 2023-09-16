@@ -132,7 +132,7 @@ namespace CrazyArcade.PlayerStateMachine
             playerItems.AddItem(item);
         }
 
-        public bool Collide(IExplosion bomb)
+        public virtual bool Collide(IExplosion bomb)
         {
             CollisionDestroyLogic();
             return true;

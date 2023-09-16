@@ -2,12 +2,18 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Threading;
 using CrazyArcade.Blocks;
 using CrazyArcade.BombFeature;
 using CrazyArcade.CAFramework;
+using CrazyArcade.CAFrameWork.CAGame;
+using CrazyArcade.CAFrameWork.GameStates;
+using CrazyArcade.CAFrameWork.InputSystem;
 using CrazyArcade.Levels;
+using CrazyArcade.PlayerStateMachine;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace CrazyArcade.CAFrameWork.UDPUpdateSystem
 {
@@ -20,8 +26,10 @@ namespace CrazyArcade.CAFrameWork.UDPUpdateSystem
 		private IPEndPoint remoteEndpoint = new IPEndPoint(IPAddress.Any, 0);
 		private Mutex mu = new Mutex();
 		private IDeserializable[] entities = new IDeserializable[255];
-		public UDPUpdateSystem(UdpClient client, ISceneDelegate sceneDelegate)
+		private IGameDelegate gameRef;
+		public UDPUpdateSystem(UdpClient client, ISceneDelegate sceneDelegate, IGameDelegate game)
 		{
+			this.gameRef = game;
 			this.client = client;
 			this.sceneDelegate = sceneDelegate;
 			Thread thread = new Thread(new ThreadStart(() =>
@@ -57,11 +65,15 @@ namespace CrazyArcade.CAFrameWork.UDPUpdateSystem
 
 		public void RemoveAll()
 		{
-
+			Console.WriteLine("Remove");
 		}
 
 		public void RemoveSprite(IEntity sprite)
 		{
+			if (sprite is OnlineCharacter)
+			{
+				gameRef.Scene = new GameOverScene(gameRef);
+			}
 		}
 
 		private int getObjectID(int offset)
@@ -97,11 +109,13 @@ namespace CrazyArcade.CAFrameWork.UDPUpdateSystem
 				}
 				else if (this.entities[i] == null)
 				{
+					Console.WriteLine("Null");
 					(offset, this.entities[i]) = make(offset);
 					this.sceneDelegate.ToAddEntity(this.entities[i]);   //add new
 				}
 				else if (objtype != this.entities[i].GetType())
 				{
+					Console.WriteLine("Not the type: " + this.entities[i].GetType() + " " + objtype);
 					this.sceneDelegate.ToRemoveEntity(this.entities[i]);    //remove old 
 					(offset, this.entities[i]) = make(offset);
 					this.sceneDelegate.ToAddEntity(this.entities[i]);       //add new
@@ -115,6 +129,7 @@ namespace CrazyArcade.CAFrameWork.UDPUpdateSystem
 			switch (this.getObjectType(offset))
 			{
 				case BLOCK_TYPE:
+					Console.WriteLine("new block: " + this.state[offset + 3] + " " + this.state[offset + 4]);
 					return (offset + 5, new DefaultBlock(
 						new Vector2(this.state[offset + 3], this.state[offset + 4]),
 						CreateLevel.LevelItem.StonePosition));
@@ -124,13 +139,25 @@ namespace CrazyArcade.CAFrameWork.UDPUpdateSystem
 					return (offset + 5, new WaterBomb(true,
 						new Vector2((int)this.state[offset + 2], (int)this.state[offset + 3]),
 						(int)this.state[offset + 4] & 0b01111111));
+				case PLAYER_TYPE:
+					Console.WriteLine("Added Player");
+					int[] keySet = new int[5];
+					keySet[0] = KeyBoardInput.KeyDown(Keys.Up);
+					keySet[1] = KeyBoardInput.KeyDown(Keys.Down);
+					keySet[2] = KeyBoardInput.KeyDown(Keys.Left);
+					keySet[3] = KeyBoardInput.KeyDown(Keys.Right);
+					keySet[4] = KeyBoardInput.KeyUp(Keys.Space);
+					OnlineCharacter player = new OnlineCharacter(keySet);
+					return (player.UpdateFieldWithStream(this.state, offset), player);
 			}
 			return (offset, null);
 		}
 		const int BLOCK_TYPE = 0;
 		const int BOMB_TYPE = 1;
+		const int PLAYER_TYPE = 2;
 		public static int BlockType() => BLOCK_TYPE;
 		public static int BombType() => BOMB_TYPE;
+		public static int PLayerType() => PLAYER_TYPE;
 	}
 }
 

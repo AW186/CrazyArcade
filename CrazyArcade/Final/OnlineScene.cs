@@ -65,27 +65,14 @@ namespace CrazyArcade.Final
 			udpClient.SendAsync(new Byte[1], 1);
 			udpClient.SendAsync(new Byte[1], 1);
 			this.systems.Add(new UDPUserInputSystem(udpClient));
-			this.systems.Add(new UDPUpdateSystem(udpClient, this));
+			this.systems.Add(new UDPUpdateSystem(udpClient, this, this.gameRef));
 			//this.systems.Add(new CASoundSystem());
 			//this.systems.Add(new InputSystems());
 			//this.systems.Add(new GridBoxSystem());
             this.systems.Add(new BombCollisionSystem(this, new Rectangle(0, 0, 15, 15)));
             this.systems.Add(gridSystems);
 			this.systems.Add(new CAGameLogicSystem());
-			//this.systems.Add(new PlayerCollisionSystem());
-			////this.systems.Add(new LevelManager(this, new DemoController()));
-			//level = new Level(this, fileName);
-			//foreach (IEntity entity in level.DrawLevel())
-			//{
-			//    if (entity is PlayerCharacter)
-			//    {
-			//        players.Add(entity as PlayerCharacter);
-			//        UI_Singleton.ChangeComponentText("lifeCounter", "count", "Lives: " + (entity as PlayerCharacter).lives);
-			//        UI_Singleton.ChangeComponentText("needle", "itemCount", "X" + (entity as PlayerCharacter).needles);
-			//        UI_Singleton.ChangeComponentText("shield", "itemCount", "X" + (entity as PlayerCharacter).shields);
-			//    }
-			//    this.AddSprite(entity);
-			//}
+            this.systems.Add(new InputSystems());
 		}
 		public override void LoadSprites()
         {
@@ -95,14 +82,13 @@ namespace CrazyArcade.Final
             this.AddSprite(new CASoundEffect("SoundEffects/StageStart"));
             //this.AddSprite(new PirateCharacter());
             this.AddSprite(new InputManager(getCommands()));
+            this.AddSprite(new KeyBoardInput());
         }
         private bool EscapePressed = false;
         private Dictionary<int, Action> getCommands()
         {
             Dictionary<int, Action> commands = new Dictionary<int, Action>();
             commands[KeyBoardInput.KeyDown(Keys.Escape)] = TogglePause;
-            /*commands[KeyBoardInput.KeyDown(Keys.V)] = Victory;
-            commands[KeyBoardInput.KeyDown(Keys.O)] = EndGame;*/
             return commands;
         }
         public override void EndGame()

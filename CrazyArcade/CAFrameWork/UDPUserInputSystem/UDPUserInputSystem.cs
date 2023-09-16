@@ -41,6 +41,8 @@ namespace CrazyArcade.CAFrameWork.UDPUserInputSystem
 			}
 			Byte[] buf = new Byte[1];
 			buf[0] = content;
+			if ((buf[0] & (1 << 4)) != 0)
+				Console.WriteLine("UDP Send: " + buf[0]);
 			client.Send(buf, 1);
 			//Console.WriteLine("Sent");
 		}
