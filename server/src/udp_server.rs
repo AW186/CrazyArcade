@@ -45,7 +45,7 @@ impl CAUdpServer {
                 let mut buf: [u8; 1] = [0;1];
                 let (_, src_addr) = sock.recv_from(&mut buf)
     .expect("Didn't receive data");                
-                let input = buf[0] & 0b00011111 + (players[&src_addr] << 5);
+                let input = (buf[0] & 0b00011111) + (players[&src_addr] << 5);
                 println!("receive from client {}, {}", src_addr, input);
                 out.send(input).unwrap();
             }
