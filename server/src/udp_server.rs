@@ -25,7 +25,7 @@ impl CAUdpServer {
             //preparation state
             let mut count: u8 = 0;
             let mut players: HashMap<SocketAddr, u8> = HashMap::new();
-            while players.len() < 1 {
+            while players.len() < 2 {
                 let mut buf: [u8; 50] = [0;50];
                 let (_, src_addr) = sock.recv_from(&mut buf)
     .expect("Didn't receive data");
@@ -45,7 +45,7 @@ impl CAUdpServer {
                 let mut buf: [u8; 1] = [0;1];
                 let (_, src_addr) = sock.recv_from(&mut buf)
     .expect("Didn't receive data");                
-                let input = buf[0] & 0b00011111 + players[&src_addr];
+                let input = buf[0] & 0b00011111 + (players[&src_addr] << 5);
                 out.send(input).unwrap();
             }
         });
