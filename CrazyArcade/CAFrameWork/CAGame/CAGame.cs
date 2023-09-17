@@ -63,7 +63,7 @@ public class CAGame : Game, IGameDelegate, ITransitionCompleteHandler
     }
     public void StartGame()
     {
-        scene = new FinalScene(this, "Level_0.json", StageOffset);
+        scene = new OnlineScene(this, "Level_0.json", StageOffset);
         base.Initialize();
     }
     public void NewGame()

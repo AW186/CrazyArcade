@@ -16,7 +16,8 @@ namespace CrazyArcade.Blocks
 {
     public class DefaultBlock : Block
     {
-        public DefaultBlock(Vector2 position, CreateLevel.LevelItem type) : base(position, getSource(type), TextureSingleton.GetDesertBlocks())
+
+		public DefaultBlock(Vector2 position, CreateLevel.LevelItem type) : base(position, getSource(type), TextureSingleton.GetDesertBlocks())
         {
             
         }
