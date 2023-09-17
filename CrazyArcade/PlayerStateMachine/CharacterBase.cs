@@ -105,6 +105,7 @@ namespace CrazyArcade.Final
 
         public void UpdatePosition()
         {
+            if (this is OnlineCharacter) return;
             Vector2 newGameCoord = new Vector2(GameCoord.X, GameCoord.Y);
             newGameCoord += trans.RevScale(CurrentSpeed);
 
